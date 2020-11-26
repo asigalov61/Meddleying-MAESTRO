@@ -354,11 +354,11 @@ output += [output_events_matrix]
 midi_data = MIDI.opus2midi(MIDI.score2opus(output))
 
 if not relative_note_timings:
-  with open('output-absolute.mid', 'wb') as midi_file1:
+  with open('output.mid', 'wb') as midi_file1:
       midi_file1.write(midi_data)
       midi_file1.close()
 else:
-  with open('output-relative.mid', 'wb') as midi_file1:
+  with open('output.mid', 'wb') as midi_file1:
     midi_file1.write(midi_data)
     midi_file1.close()
 
@@ -530,4 +530,4 @@ while itrack < len(output1):
 plt.show()
 
 
-FluidSynth("./font.sf2", 16000).midi_to_audio('./output-relative.mid', './output.wav')
+FluidSynth("./font.sf2", 44000).midi_to_audio('./output.mid', './output.wav')
