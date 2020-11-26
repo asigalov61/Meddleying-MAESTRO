@@ -79,6 +79,11 @@ import MIDI
 from visual_midi import Plotter
 from visual_midi import Preset
 from pretty_midi import PrettyMIDI
+from midi2audio import FluidSynth
+
+#===some defaults===
+
+
 ticks_per_note = 50
 ctime = 0
 cev_matrix = []
@@ -501,7 +506,7 @@ for f in files:
 #uses split encoding to get the text representation for ease of development
 
 #@title Basic graph of the last output
-seconds_to_show = 30 #@param {type:"slider", min:1, max:180, step:1}
+seconds_to_show = 90 #@param {type:"slider", min:1, max:180, step:1}
 show_whole_track = False #@param {type:"boolean"}
 graph_color = "red" #@param ["blue", "red", "green"]
 
@@ -524,13 +529,5 @@ while itrack < len(output1):
   itrack +=1
 plt.show()
 
-#@title Output MIDI bokeh plot
 
-preset = Preset(plot_width=850)
-plotter = Plotter(preset, plot_max_length_bar=4)
-
-if not relative_note_timings:
-  pm = PrettyMIDI("./output-absolute.mid")
-else:
-  pm = PrettyMIDI("./output-relative.mid")
-plotter.show_notebook(pm)
+FluidSynth("./font.sf2", 16000).midi_to_audio('./output-relative.mid', './output.wav')
