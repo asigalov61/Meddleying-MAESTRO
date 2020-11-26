@@ -48,7 +48,6 @@ from IPython.display import display, Image, Audio
 import MIDI
 from pretty_midi import PrettyMIDI
 from midi2audio import FluidSynth
-from pretty_midi import PrettyMIDI
 
 #some defaults
 
