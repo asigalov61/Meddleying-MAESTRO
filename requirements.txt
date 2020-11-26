@@ -1,0 +1,8 @@
+numpy
+IPython
+tqdm
+matplotlib
+mido
+music21
+pretty_midi
+visual_midi
