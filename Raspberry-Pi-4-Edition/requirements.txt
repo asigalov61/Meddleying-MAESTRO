@@ -4,8 +4,12 @@ tqdm
 matplotlib
 mido
 music21
+pickle
+secrets
+statistics
 pretty_midi
 visual_midi
 midi2audio
 fluidsynth
 pyfluidsynth
+timidity
