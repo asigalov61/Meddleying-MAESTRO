@@ -1,1 +1,2 @@
 
+Default input MIDI dir
