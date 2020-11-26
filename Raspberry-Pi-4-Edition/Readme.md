@@ -3,9 +3,17 @@ Install all requirements from requirements
 
 Use MM_RaspiAudio_MIC+.sh to run on startup to control the generation and the playback with the RaspiAudio button.
 Simply add MM_RaspiAudio_MIC+ to chron (sudo crontab -e) or /etc/rc.local
-
+***
 I.e. for chron:
-@reboot /home/pi/MM_RaspiAudio_MIC+.sh
 
+@reboot /home/pi/MM_RaspiAudio_MIC+.sh
+***
 or for rc.local
+
 sudo bash /home/pi/MM_RaspiAudio_MIC+.sh
+***
+And if you want to replace default Timidity SF2, simply copy yours to /usr/share/sounds/sf/FluidR3_GM.sf2
+i.e.
+
+cp font.sf2 /usr/share/sounds/sf/FluidR3_GM.sf2
+***
