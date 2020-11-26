@@ -23,6 +23,8 @@ Original file is located at
 # Setup Environment, clone needed code, and install all required dependencies
 """
 
+print('Meddleying MAESTRO Algorithmic Intelligence Music Generator. Version 2.6')
+print('Starting up...')
 
 """# Load/Re-load the processed dataset"""
 import pickle
@@ -40,7 +42,7 @@ with open(full_path_to_dataset_file, 'rb') as filehandle:
     events_matrix = ev_matrix
     notes_matrix = not_matrix
 
-print('Task complete. Enjoy! :)')
+print('Task complete.')
 print('==================================================')
 print('Number of notes in the dataset:', len(not_matrix))
 print('Number of total MIDI events recorded:', len(ev_matrix))
@@ -86,9 +88,9 @@ debug = False
 
 #@title Play with the settings until you get what you like 
 attention_span = "augmentation1" #@param ["augmentation1", "augmentation2"]
-start_note = 60 #@param {type:"slider", min:1, max:127, step:1}
-notes_per_slice = 30 #@param {type:"slider", min:5, max:60, step:1}
-number_of_slices = 100 #@param {type:"slider", min:5, max:400, step:5}
+start_note = 80 #@param {type:"slider", min:1, max:127, step:1}
+notes_per_slice = 60 #@param {type:"slider", min:5, max:60, step:1}
+number_of_slices = 15 #@param {type:"slider", min:5, max:400, step:5}
 relative_note_timings = True #@param {type:"boolean"}
 try_to_find_intro_for_composition = False #@param {type:"boolean"}
 output_ticks = 400 #@param {type:"slider", min:0, max:2000, step:100}
