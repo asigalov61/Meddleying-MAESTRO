@@ -13,7 +13,7 @@ do
 #led ON
 cd ./Meddleying-MAESTRO/
 
-python3 MM_Generator.py&
+python3 /home/pi/Meddleying-MAESTRO/MM_Generator.py
 sleep 10
 echo 1 >/sys/class/gpio/gpio25/value
 
@@ -42,12 +42,11 @@ sleep 1
 echo 1 >/sys/class/gpio/gpio25/value
 sleep 1
 echo 0 >/sys/class/gpio/gpio25/value
-sleep 1
 
 
 echo "Playing the output MIDI file..."
 #play record
-timidity ./output.mid
+timidity /home/pi/Meddleying-MAESTRO/output.mid
 done
 echo "------------------------------------------------------------------------"
 done
