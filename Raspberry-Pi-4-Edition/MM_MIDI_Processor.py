@@ -189,8 +189,11 @@ for file in tqdm.auto.tqdm(files):
 
     midi_file = open(file_address, 'rb')
     if debug: print('Processing File:', file_address)
-
-    score2 = MIDI.midi2opus(midi_file.read())
+    try:
+      score2 = MIDI.midi2opus(midi_file.read())
+    except:
+      print('Bad file. Skipping...')
+      continue
     score1 = MIDI.to_millisecs(score2)
     score3 = MIDI.opus2score(score1)
     score = score3
