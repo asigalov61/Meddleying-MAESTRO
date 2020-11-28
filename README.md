@@ -2,7 +2,8 @@
 
 ***
 
-## Full-featured Algorithmic Intelligence music generator with full multi-instrument MIDI support.
+## Full-featured Algorithmic Intelligence Music Augmentator (AIMA) with full multi-instrument MIDI output.
+## NOW with Karaoke support :)
 
 ***
 
