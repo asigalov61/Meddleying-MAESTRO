@@ -19,8 +19,8 @@
 
 Option 1:
 
-1) Open Meddleying_MAESTRO.ipyn
-2) Click on "Open in Colab" button
+1) Click on Meddleying_MAESTRO.ipynb above
+2) Click on blue "Open in Colab" button in the Github preview
 
 Option 2:
 
