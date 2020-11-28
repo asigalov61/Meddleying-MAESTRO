@@ -27,8 +27,8 @@ Option 2:
 1) git clone https://github.com/asigalov61/Meddleying-MAESTRO/
 2) cd /Meddleying-MAESTRO/
 3) Unzip provided MIDI dataset in Dataset to Dataset or copy your MIDIs to Dataset
-4) python3 MM_MIDIProcessor.py
-5) python3 MM_Generator.py
+4) python3 MM_MIDI_Processor_2_7.py
+5) python3 MM_Generator_2_7.py
 
 Enjoy! :)
 
