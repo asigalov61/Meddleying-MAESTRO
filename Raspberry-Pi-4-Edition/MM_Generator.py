@@ -105,7 +105,7 @@ notes_durations_multiplier = 1.25 #@param {type:"slider", min:0.5, max:1.5, step
 notes_velocities_multiplier = 1.5 #@param {type:"slider", min:0.1, max:2, step:0.1}
 transpose_velocity = -30 #@param {type:"slider", min:-60, max:60, step:1}
 transpose_composition = 0 #@param {type:"slider", min:-30, max:30, step:1}
-set_all_MIDI_patches_to_piano = True #@param {type:"boolean"}
+set_all_MIDI_patches_to_piano = False #@param {type:"boolean"}
 MIDI_channel_patch_00 = 0 #@param {type:"number"}
 MIDI_channel_patch_01 = 24 #@param {type:"number"}
 MIDI_channel_patch_02 = 32 #@param {type:"number"}
@@ -181,9 +181,13 @@ output1 = output
 output_events_matrix = [['track_name', 0, b'Composition Track']]
 output_events_matrix1 = [['track_name', 0, b'Composition Track']]        
 
-#output.append(output_events_matrix)    
-#output1.append(output_events_matrix1)
+start_note = secrets.randbelow(128)
 
+if secrets.randbelow(2) == 0:
+    set_all_MIDI_patches_to_piano = True
+else:
+    set_all_MIDI_patches_to_piano = False
+    
 if ctime > 0:
   time = ctime
 else:
