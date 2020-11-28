@@ -31,6 +31,7 @@ Option 2:
 5) python MM_MIDI_Processor_2_7.py
 6) python MM_Generator_2_7.py
 7) If everything worked the graph of the composition will pop up. Close it to start the fluidsynth player.
+8) Type quit in fluidsynth to return to command line prompt.
 
 Enjoy! :)
 
