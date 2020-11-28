@@ -112,7 +112,7 @@ notes_durations_multiplier = 1.25 #@param {type:"slider", min:0.5, max:1.5, step
 notes_velocities_multiplier = 1.5 #@param {type:"slider", min:0.1, max:2, step:0.1}
 transpose_velocity = -30 #@param {type:"slider", min:-60, max:60, step:1}
 transpose_composition = 0 #@param {type:"slider", min:-30, max:30, step:1}
-set_all_MIDI_patches_to_piano = True #@param {type:"boolean"}
+set_all_MIDI_patches_to_piano = False #@param {type:"boolean"}
 MIDI_channel_patch_00 = 0 #@param {type:"number"}
 MIDI_channel_patch_01 = 24 #@param {type:"number"}
 MIDI_channel_patch_02 = 32 #@param {type:"number"}
@@ -561,5 +561,5 @@ while itrack < len(output1):
   itrack +=1
 plt.show()
 
-
-FluidSynth("./font.sf2", 44000).midi_to_audio('./output.mid', './output.wav')
+#https://sites.google.com/site/soundfonts4u/
+FluidSynth("./SGM-v2.01-YamahaGrand-Guit-Bass-v2.7.sf2", 44000).midi_to_audio('./output.mid', './output.wav')
