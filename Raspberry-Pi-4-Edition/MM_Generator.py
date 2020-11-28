@@ -392,7 +392,11 @@ else:
     midi_file1.write(midi_data)
     midi_file1.close()
     
-now = datetime.now()
+now = str(datetime.now())
+now_n = str(datetime.now())
+now_n = now_n.replace(' ', '-')
+now_n = now_n.replace(':', '_')
+now = now_n.replace('.', '_')
     
 if not relative_note_timings:
   fname_abs = './Saved_Output/output-absolute_' + str(now) + '.mid'  
