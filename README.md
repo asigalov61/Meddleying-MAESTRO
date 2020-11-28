@@ -28,8 +28,9 @@ Option 2:
 2) cd /Meddleying-MAESTRO/
 3) Install all requirements from Requirements
 4) Unzip provided MIDI dataset in Dataset to Dataset or copy your MIDIs to Dataset
-5) python3 MM_MIDI_Processor_2_7.py
-6) python3 MM_Generator_2_7.py
+5) python MM_MIDI_Processor_2_7.py
+6) python MM_Generator_2_7.py
+7) If everything worked the graph of the composition will pop up. Close it to start the fluidsynth player.
 
 Enjoy! :)
 
