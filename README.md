@@ -15,6 +15,25 @@
 
 ***
 
-Project Los Angeles
+### How to run:
 
-Tegridy Code 2020
+Option 1:
+
+1) Open Meddleying_MAESTRO.ipyn
+2) Click on "Open in Colab" button
+
+Option 2:
+
+1) git clone https://github.com/asigalov61/Meddleying-MAESTRO/
+2) cd /Meddleying-MAESTRO/
+3) Unzip provided MIDI dataset in Dataset to Dataset or copy your MIDIs to Dataset
+4) python3 MM_MIDIProcessor.py
+5) python3 MM_Generator.py
+
+Enjoy! :)
+
+***
+
+#### Project Los Angeles
+
+#### Tegridy Code 2020
