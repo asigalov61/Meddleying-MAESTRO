@@ -76,7 +76,6 @@ import sys
 import tqdm.auto
 import secrets
 import pretty_midi
-#from google.colab import output, drive
 import statistics
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
@@ -100,20 +99,32 @@ debug = False
 
 #@title Play with the settings until you get what you like 
 attention_span = "augmentation1" #@param ["augmentation1", "augmentation2"]
-start_note = 80 #@param {type:"slider", min:1, max:127, step:1}
+
+start_note = 60 #@param {type:"slider", min:1, max:127, step:1}
+start_note_is_random = True #@param {type:"boolean"}
+
 notes_per_slice = 60 #@param {type:"slider", min:5, max:60, step:1}
 number_of_slices = 15 #@param {type:"slider", min:5, max:400, step:5}
+
 relative_note_timings = True #@param {type:"boolean"}
+
 try_to_find_intro_for_composition = False #@param {type:"boolean"}
+
 output_ticks = 400 #@param {type:"slider", min:0, max:2000, step:100}
 ticks_per_note = 180 #@param {type:"slider", min:0, max:2000, step:10}
-ticks_durations_multiplier = 1
+
+ticks_durations_multiplier = 1 #@param {type:"slider", min:0, max:2, step:0.01}
 notes_timings_multiplier = 0.97 #@param {type:"slider", min:0, max:2, step:0.01}
 notes_durations_multiplier = 1.25 #@param {type:"slider", min:0.5, max:1.5, step:0.01}
 notes_velocities_multiplier = 1.5 #@param {type:"slider", min:0.1, max:2, step:0.1}
+
 transpose_velocity = -30 #@param {type:"slider", min:-60, max:60, step:1}
 transpose_composition = 0 #@param {type:"slider", min:-30, max:30, step:1}
+
 set_all_MIDI_patches_to_piano = False #@param {type:"boolean"}
+set_all_MIDI_patches_to_piano_randomly = True #@param {type:"boolean"}
+set_MIDI_patches_randomly = False #@param {type:"boolean"}
+
 MIDI_channel_patch_00 = 0 #@param {type:"number"}
 MIDI_channel_patch_01 = 24 #@param {type:"number"}
 MIDI_channel_patch_02 = 32 #@param {type:"number"}
@@ -132,9 +143,11 @@ MIDI_channel_patch_14 = 0 #@param {type:"number"}
 MIDI_channel_patch_15 = 0 #@param {type:"number"}
 
 
+
 #===TODO===
 melody_only_output_for_melody_datasets = False
 #===
+
 output_events_matrix = []
 output_events_matrix1 = []
 midi_data = []
@@ -164,6 +177,14 @@ event03 = []
 event04 = []
 global_time = []
 
+
+if set_all_MIDI_patches_to_piano_randomly:
+  if secrets.randbelow(2) == 0:
+    set_all_MIDI_patches_to_piano = True
+  else:
+    set_all_MIDI_patches_to_piano = False
+
+
 if set_all_MIDI_patches_to_piano:
   output = [output_ticks, [['track_name', 0, b'Meddleying MAESTRO']]]
 else:
@@ -185,12 +206,33 @@ else:
               ['patch_change', 0, 13, MIDI_channel_patch_13],
               ['patch_change', 0, 14, MIDI_channel_patch_14],
               ['patch_change', 0, 15, MIDI_channel_patch_15],]]
+
 output1 = output
 output_events_matrix = [['track_name', 0, b'Composition Track']]
 output_events_matrix1 = [['track_name', 0, b'Composition Track']]        
 
-#output.append(output_events_matrix)    
-#output1.append(output_events_matrix1)
+if set_MIDI_patches_randomly:
+  output = [output_ticks,
+            [['track_name', 0, b'Meddleying MAESTRO'], 
+              ['patch_change', 0, 0, secrets.randbelow(128)], 
+              ['patch_change', 0, 1, secrets.randbelow(128)],
+              ['patch_change', 0, 2, secrets.randbelow(128)],
+              ['patch_change', 0, 3, secrets.randbelow(128)],
+              ['patch_change', 0, 4, secrets.randbelow(128)],
+              ['patch_change', 0, 5, secrets.randbelow(128)],
+              ['patch_change', 0, 6, secrets.randbelow(128)],
+              ['patch_change', 0, 7, secrets.randbelow(128)],
+              ['patch_change', 0, 8, secrets.randbelow(128)],
+              ['patch_change', 0, 9, secrets.randbelow(128)],
+              ['patch_change', 0, 10, secrets.randbelow(128)],
+              ['patch_change', 0, 11, secrets.randbelow(128)],
+              ['patch_change', 0, 12, secrets.randbelow(128)],
+              ['patch_change', 0, 13, secrets.randbelow(128)],
+              ['patch_change', 0, 14, secrets.randbelow(128)],
+              ['patch_change', 0, 15, secrets.randbelow(128)],]]
+
+if start_note_is_random:
+  start_note = secrets.randbelow(128)
 
 if ctime > 0:
   time = ctime
@@ -322,12 +364,19 @@ for i in tqdm.auto.tqdm(range(number_of_slices)):
             if events_matrix[i][5] == event03[5]:
               if events_matrix[i][3] == event03[3]:                   
                 if notes_matrix[i+1] == event02[4]:
+                  index = i + 1
                   if notes_matrix[i+2] == event01[4]:
-                    if notes_matrix[i+3] == event0[4]:                     
+                    index = i + 2
+                    if notes_matrix[i+3] == event0[4]:
+                      index = i + 3                     
                       if notes_matrix[i+4] == event[4]:
+                        index = i + 4
                         if notes_matrix[i+5] == event1[4]:
+                          index = i + 5
                           if notes_matrix[i+6] == event2[4]:
+                            index = i + 6
                             if notes_matrix[i+7] == event3[4]:
+                              index = i + 7
                               if notes_matrix[i+8] == event4[4]:
                                 index = i + 8
     except:
@@ -348,13 +397,19 @@ for i in tqdm.auto.tqdm(range(number_of_slices)):
                 if notes_matrix[i+1] == event02[4]:
                   if events_matrix[i+1][2] == event02[2]:
                     if events_matrix[i+1][5] == event02[5]:
-                      if events_matrix[i+1][3] == event02[3]:                     
+                      if events_matrix[i+1][3] == event02[3]:                    
                         if notes_matrix[i+2] == event01[4]:
-                          if notes_matrix[i+3] == event0[4]:                     
+                          index = i + 2
+                          if notes_matrix[i+3] == event0[4]:
+                            index = i + 3                    
                             if notes_matrix[i+4] == event[4]:
+                              index = i + 4
                               if notes_matrix[i+5] == event1[4]:
+                                index = i + 5
                                 if notes_matrix[i+6] == event2[4]:
+                                  index = i + 6
                                   if notes_matrix[i+7] == event3[4]:
+                                    index = i + 7
                                     if notes_matrix[i+8] == event4[4]:
                                       index = i + 8
     except:

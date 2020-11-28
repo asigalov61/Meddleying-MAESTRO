@@ -73,7 +73,7 @@ transpose_MIDIs_to_one_key = False #@param {type:"boolean"}
 melody_reduction_to_slices_max_pitches = False #@param {type:"boolean"}
 desired_MIDI_channel = 16 #@param {type:"slider", min:1, max:16, step:1}
 flip_input_dataset = False #@param {type:"boolean"}
-remove_drums = False #@param {type:"boolean"}
+remove_drums = True #@param {type:"boolean"}
 flip_notes = False #@param {type:"boolean"}
 transpose_notes_pitch = 0 #@param {type:"slider", min:-30, max:30, step:1}
 remove_random_notes = False #@param {type:"boolean"}
@@ -190,8 +190,11 @@ for file in tqdm.auto.tqdm(files):
 
     midi_file = open(file_address, 'rb')
     if debug: print('Processing File:', file_address)
-
-    score2 = MIDI.midi2opus(midi_file.read())
+    try:
+      score2 = MIDI.midi2opus(midi_file.read())
+    except:
+      print('Bad file. Skipping...')
+      continue
     score1 = MIDI.to_millisecs(score2)
     score3 = MIDI.opus2score(score1)
     score = score3
