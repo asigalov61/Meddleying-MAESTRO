@@ -70,6 +70,7 @@ import music21
 from music21 import *
 import pickle
 import time
+from datetime import datetime
 import math
 import sys
 import tqdm.auto
@@ -391,6 +392,23 @@ if not relative_note_timings:
       midi_file1.close()
 else:
   with open('output.mid', 'wb') as midi_file1:
+    midi_file1.write(midi_data)
+    midi_file1.close()
+
+now = ''
+now_n = str(datetime.now())
+now_n = now_n.replace(' ', '_')
+now_n = now_n.replace(':', '_')
+now = now_n.replace('.', '_')
+    
+if not relative_note_timings:
+  fname_abs = './Saved_Output/output-absolute_' + str(now) + '.mid'  
+  with open(fname_abs , 'wb') as midi_file1:
+      midi_file1.write(midi_data)
+      midi_file1.close()
+else:
+  fname_rel = './Saved_Output/output-relative_' + str(now) + '.mid'    
+  with open(fname_rel, 'wb') as midi_file1:
     midi_file1.write(midi_data)
     midi_file1.close()
 
