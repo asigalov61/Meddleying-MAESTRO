@@ -17,7 +17,17 @@ And if you want to replace default Timidity SF2, simply copy yours to /usr/share
 i.e.
 
 cp font.sf2 /usr/share/sounds/sf/FluidR3_GM.sf2
+
 ***
+
+To manage the resulting box, enable built-in VNC remote desktop server.
+sudo raspi-config
+Then navigate to Interface Options and enable VNC server
+Reboot (sudo reboot)
+Test connection at the box's IP (you may need to connect the monitor to the box if you want to reboot the box)
+
+***
+
 ### Hardware
 
 1) ONE Raspberry Pi 4 Model B 2019 Quad Core 64 Bit WiFi Bluetooth (4GB)
