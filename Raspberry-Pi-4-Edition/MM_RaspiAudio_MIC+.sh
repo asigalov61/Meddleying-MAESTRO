@@ -6,6 +6,12 @@ echo out >/sys/class/gpio/gpio25/direction
 echo 23 >/sys/class/gpio/export
 echo in >/sys/class/gpio/gpio23/direction
 
+#Set volume
+amixer set Micro 50%
+amixer set Master 80%
+sudo alsactl store
+sleep 1
+
 ##Chime prompt
 aplay /home/pi/Meddleying-MAESTRO/Voice_Prompts/Computer_Magic-Microsift-1901299923.wav
 sleep 1
@@ -17,11 +23,6 @@ sleep 1
 echo "--------Main Outer Cycle-----------"
 while [ 1 ]
 do
-
-#Set volume
-amixer set Micro 50%
-amixer set Master 99%
-sudo alsactl store
 
 #led ON
 echo 1 >/sys/class/gpio/gpio25/value
@@ -53,9 +54,21 @@ echo  "------Please press the on Yellow button to listen to your composition"
 echo 1 >/sys/class/gpio/gpio25/value
 sleep 1
 
+#Set volume
+amixer set Micro 50%
+amixer set Master 96%
+sudo alsactl store
+sleep 1
+
 #play last record
 timidity /home/pi/Meddleying-MAESTRO/output.mid
 sleep 3
+
+#Set volume
+amixer set Micro 50%
+amixer set Master 80%
+sudo alsactl store
+sleep 1
 
 echo 0 >/sys/class/gpio/gpio25/value
 sleep 1
