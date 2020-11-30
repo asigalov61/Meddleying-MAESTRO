@@ -82,25 +82,25 @@ echo 1 >/sys/class/gpio/gpio25/value
 sleep 1
 
 #waiting button pressed
-while [ `cat /sys/class/gpio/gpio23/value` = 1 ]; do
-set i = 1
-done
+#while [ `cat /sys/class/gpio/gpio23/value` = 1 ]; do
+#set i = 1
+#done
 
-echo 1 >/sys/class/gpio/gpio25/value
-sleep 1
-echo 0 >/sys/class/gpio/gpio25/value
-sleep 1
+#echo 1 >/sys/class/gpio/gpio25/value
+#sleep 1
+#echo 0 >/sys/class/gpio/gpio25/value
+#sleep 1
 
-echo "Playing the output MIDI file..."
+#echo "Playing the output MIDI file..."
 
-play record
-timidity /home/pi/Meddleying-MAESTRO/output.mid
-sleep 1
+#play record
+#timidity /home/pi/Meddleying-MAESTRO/output.mid
+#sleep 1
 
-echo 1 >/sys/class/gpio/gpio25/value
-sleep 1
-echo 0 >/sys/class/gpio/gpio25/value
-sleep 1
+#echo 1 >/sys/class/gpio/gpio25/value
+#sleep 1
+#echo 0 >/sys/class/gpio/gpio25/value
+#sleep 1
 
 done
 echo "------------------------------------------------------------------------"
