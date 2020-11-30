@@ -34,10 +34,25 @@ sleep 1
 
 #play last record
 timidity /home/pi/Meddleying-MAESTRO/output.mid
-sleep 1
+sleep 3
 
+echo 0 >/sys/class/gpio/gpio25/value
+sleep 1
 echo 1 >/sys/class/gpio/gpio25/value
 sleep 1
+
+#waiting button pressed for 5 secons (delayed press)
+while [ `cat /sys/class/gpio/gpio23/value` = 1 ]; do
+sleep 5
+while [ `cat /sys/class/gpio/gpio23/value` = 1 ]; do
+sleep 5
+set i = 1
+done
+set i = 1
+done
+echo  "------Please press the on Yellow button to listen to your composition"
+
+#led OFF
 echo 0 >/sys/class/gpio/gpio25/value
 sleep 1
 
@@ -47,15 +62,6 @@ sleep 1
 
 echo 1 >/sys/class/gpio/gpio25/value
 sleep 1
-
-#waiting button pressed
-while [ `cat /sys/class/gpio/gpio23/value` = 1 ]; do
-sleep 5
-set i = 1
-done
-echo  "------Please press the on Yellow button to listen to your composition"
-
-#led OFF
 echo 0 >/sys/class/gpio/gpio25/value
 sleep 1
 
