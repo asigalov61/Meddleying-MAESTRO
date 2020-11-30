@@ -14,7 +14,7 @@ do
 cd ./Meddleying-MAESTRO/
 
 python3 /home/pi/Meddleying-MAESTRO/MM_Generator.py
-sleep 10
+sleep 1
 echo 1 >/sys/class/gpio/gpio25/value
 
 echo  "------Please press the on Yellow button to listen to your composition"
