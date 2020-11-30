@@ -145,11 +145,11 @@ sleep 1
 #echo 0 >/sys/class/gpio/gpio25/value
 #sleep 1
 
-#Chime prompt
-aplay /home/pi/Meddleying-MAESTRO/Voice_Prompts/Computer_Magic-Microsift-1901299923.wav
-sleep 1
+##Chime prompt
+#aplay /home/pi/Meddleying-MAESTRO/Voice_Prompts/Computer_Magic-Microsift-1901299923.wav
+#sleep 1
 
-#echo "Playing the output MIDI file..."
+echo "------Playing the output MIDI file..."
 
 #play record
 #timidity /home/pi/Meddleying-MAESTRO/output.mid
