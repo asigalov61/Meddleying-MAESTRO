@@ -103,8 +103,8 @@ attention_span = "augmentation1" #@param ["augmentation1", "augmentation2"]
 start_note = 60 #@param {type:"slider", min:1, max:127, step:1}
 start_note_is_random = True #@param {type:"boolean"}
 
-notes_per_slice = 60 #@param {type:"slider", min:5, max:60, step:1}
-number_of_slices = 15 #@param {type:"slider", min:5, max:400, step:5}
+notes_per_slice = 64 #@param {type:"slider", min:7, max:64, step:8}
+number_of_slices = 16 #@param {type:"slider", min:3, max:400, step:4}
 
 relative_note_timings = True #@param {type:"boolean"}
 
@@ -364,19 +364,19 @@ for i in tqdm.auto.tqdm(range(number_of_slices)):
             if events_matrix[i][5] == event03[5]:
               if events_matrix[i][3] == event03[3]:                   
                 if notes_matrix[i+1] == event02[4]:
-                  index = i + 1
+                  #index = i + 1
                   if notes_matrix[i+2] == event01[4]:
-                    index = i + 2
+                    #index = i + 2
                     if notes_matrix[i+3] == event0[4]:
-                      index = i + 3                     
+                      #index = i + 3                     
                       if notes_matrix[i+4] == event[4]:
-                        index = i + 4
+                        #index = i + 4
                         if notes_matrix[i+5] == event1[4]:
-                          index = i + 5
+                          #index = i + 5
                           if notes_matrix[i+6] == event2[4]:
-                            index = i + 6
+                            #index = i + 6
                             if notes_matrix[i+7] == event3[4]:
-                              index = i + 7
+                              #index = i + 7
                               if notes_matrix[i+8] == event4[4]:
                                 index = i + 8
     except:
@@ -401,15 +401,15 @@ for i in tqdm.auto.tqdm(range(number_of_slices)):
                         if notes_matrix[i+2] == event01[4]:
                           index = i + 2
                           if notes_matrix[i+3] == event0[4]:
-                            index = i + 3                    
+                            #index = i + 3                    
                             if notes_matrix[i+4] == event[4]:
-                              index = i + 4
+                              #index = i + 4
                               if notes_matrix[i+5] == event1[4]:
-                                index = i + 5
+                                #index = i + 5
                                 if notes_matrix[i+6] == event2[4]:
-                                  index = i + 6
+                                  #index = i + 6
                                   if notes_matrix[i+7] == event3[4]:
-                                    index = i + 7
+                                    #index = i + 7
                                     if notes_matrix[i+8] == event4[4]:
                                       index = i + 8
     except:
