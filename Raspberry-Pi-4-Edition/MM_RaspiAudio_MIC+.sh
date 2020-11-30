@@ -20,7 +20,7 @@ echo 1 >/sys/class/gpio/gpio25/value
 echo  "------Please press the on Yellow button to listen to your composition"
 
 amixer set Micro 50%
-amixer set Master 96%
+amixer set Master 99%
 sudo alsactl store
 
 #waiting button pressed
