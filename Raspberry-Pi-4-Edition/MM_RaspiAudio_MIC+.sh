@@ -11,10 +11,7 @@ do
 while [ 1 ]
 do
 #led ON
-cd ./Meddleying-MAESTRO/
 
-python3 /home/pi/Meddleying-MAESTRO/MM_Generator.py
-sleep 1
 echo 1 >/sys/class/gpio/gpio25/value
 
 echo  "------Please press the on Yellow button to listen to your composition"
@@ -47,6 +44,12 @@ echo 0 >/sys/class/gpio/gpio25/value
 echo "Playing the output MIDI file..."
 #play record
 timidity /home/pi/Meddleying-MAESTRO/output.mid
+sleep 1
+cd ./Meddleying-MAESTRO/
+python3 /home/pi/Meddleying-MAESTRO/MM_Generator.py
+sleep 1
+echo 1 >/sys/class/gpio/gpio25/value
+sleep 1
 done
 echo "------------------------------------------------------------------------"
 done
