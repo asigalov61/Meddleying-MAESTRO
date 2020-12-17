@@ -9,7 +9,7 @@ Original file is located at
 Original GitHub repo is located at:
     https://github.com/asigalov61/Meddleying-MAESTRO
 
-# Meddleying MAESTRO (ver 2.8)
+# Meddleying MAESTRO (ver 3.1)
 
 ***
 
@@ -26,7 +26,7 @@ Original GitHub repo is located at:
 # Setup Environment, clone needed code, and install all required dependencies
 """
 
-print('Meddleying MAESTRO Algorithmic Intelligence Music Generator. Version 2.7')
+print('Meddleying MAESTRO Algorithmic Intelligence Music Augmentator. Version 3.1')
 print('Starting up...')
 
 """# Load/Re-load the processed dataset"""
@@ -69,6 +69,7 @@ Recommended settings are: notes per slice = 30 and notes timings multiplier rang
 import glob
 import os
 import numpy as np
+import toolz
 import music21
 from music21 import *
 import pickle
@@ -102,33 +103,23 @@ debug = False
 
 
 #@title Play with the settings until you get what you like 
-attention_span = "augmentation1" #@param ["augmentation1", "augmentation2"]
-
-start_note = 64 #@param {type:"slider", min:1, max:127, step:1}
-start_note_is_random = True #@param {type:"boolean"}
-
-notes_per_slice = 64 #@param {type:"slider", min:5, max:128, step:1}
-number_of_slices = 16 #@param {type:"slider", min:5, max:400, step:5}
-
 relative_note_timings = True #@param {type:"boolean"}
-
-try_to_find_intro_for_composition = False #@param {type:"boolean"}
-
+start_note = 60 #@param {type:"slider", min:1, max:127, step:1}
+start_with_random_introduction = True #@param {type:"boolean"}
+notes_per_slice = 100 #@param {type:"slider", min:1, max:200, step:1}
+number_of_notes_to_match_slices = 80 #@param {type:"slider", min:0, max:100, step:1}
+number_of_slices = 5 #@param {type:"slider", min:1, max:100, step:1}
+extra_match_slices = "Durations" #@param ["Notes Only", "Durations", "Velocities", "Channels", "Full Match"]
+try_to_find_intro_for_composition = False
 output_ticks = 400 #@param {type:"slider", min:0, max:2000, step:100}
 ticks_per_note = 180 #@param {type:"slider", min:0, max:2000, step:10}
-
-ticks_durations_multiplier = 1 #@param {type:"slider", min:0, max:2, step:0.01}
-notes_timings_multiplier = 0.97 #@param {type:"slider", min:0, max:2, step:0.01}
-notes_durations_multiplier = 1.25 #@param {type:"slider", min:0.5, max:1.5, step:0.01}
+ticks_durations_multiplier = 1
+notes_timings_multiplier = 1 #@param {type:"slider", min:0, max:2, step:0.01}
+notes_durations_multiplier = 1 #@param {type:"slider", min:0.5, max:1.5, step:0.01}
 notes_velocities_multiplier = 1.5 #@param {type:"slider", min:0.1, max:2, step:0.1}
-
 transpose_velocity = -30 #@param {type:"slider", min:-60, max:60, step:1}
 transpose_composition = 0 #@param {type:"slider", min:-30, max:30, step:1}
-
 set_all_MIDI_patches_to_piano = False #@param {type:"boolean"}
-set_all_MIDI_patches_to_piano_randomly = False #@param {type:"boolean"}
-set_MIDI_patches_randomly = False #@param {type:"boolean"}
-
 MIDI_channel_patch_00 = 0 #@param {type:"number"}
 MIDI_channel_patch_01 = 24 #@param {type:"number"}
 MIDI_channel_patch_02 = 32 #@param {type:"number"}
@@ -146,12 +137,6 @@ MIDI_channel_patch_13 = 0 #@param {type:"number"}
 MIDI_channel_patch_14 = 0 #@param {type:"number"}
 MIDI_channel_patch_15 = 0 #@param {type:"number"}
 
-
-
-#===TODO===
-melody_only_output_for_melody_datasets = False
-#===
-
 output_events_matrix = []
 output_events_matrix1 = []
 midi_data = []
@@ -162,6 +147,10 @@ index = 0
 index1 = 0
 time = 0
 x = 0
+nts = 0
+nts1 = 0
+dts = 0
+kar = 0
 output = []
 output1 = []
 average_note_pitch = 100
@@ -180,14 +169,27 @@ event02 = []
 event03 = [] 
 event04 = []
 global_time = []
+block_events = []
+block_notes = []
+end_index = 0
 
 
-if set_all_MIDI_patches_to_piano_randomly:
-  if secrets.randbelow(2) == 0:
-    set_all_MIDI_patches_to_piano = True
-  else:
-    set_all_MIDI_patches_to_piano = False
-
+ch0_ev_matrix = []
+ch1_ev_matrix = []
+ch2_ev_matrix = []
+ch3_ev_matrix = []
+ch4_ev_matrix = []
+ch5_ev_matrix = []
+ch6_ev_matrix = []
+ch7_ev_matrix = []
+ch8_ev_matrix = []
+ch9_ev_matrix = []
+ch10_ev_matrix = []
+ch11_ev_matrix = []
+ch12_ev_matrix = []
+ch13_ev_matrix = []
+ch14_ev_matrix = []
+ch15_ev_matrix = []
 
 if set_all_MIDI_patches_to_piano:
   output = [output_ticks, [['track_name', 0, b'Meddleying MAESTRO']]]
@@ -210,46 +212,113 @@ else:
               ['patch_change', 0, 13, MIDI_channel_patch_13],
               ['patch_change', 0, 14, MIDI_channel_patch_14],
               ['patch_change', 0, 15, MIDI_channel_patch_15],]]
-
 output1 = output
 output_events_matrix = [['track_name', 0, b'Composition Track']]
 output_events_matrix1 = [['track_name', 0, b'Composition Track']]        
 
-if set_MIDI_patches_randomly:
-  output = [output_ticks,
-            [['track_name', 0, b'Meddleying MAESTRO'], 
-              ['patch_change', 0, 0, secrets.randbelow(128)], 
-              ['patch_change', 0, 1, secrets.randbelow(128)],
-              ['patch_change', 0, 2, secrets.randbelow(128)],
-              ['patch_change', 0, 3, secrets.randbelow(128)],
-              ['patch_change', 0, 4, secrets.randbelow(128)],
-              ['patch_change', 0, 5, secrets.randbelow(128)],
-              ['patch_change', 0, 6, secrets.randbelow(128)],
-              ['patch_change', 0, 7, secrets.randbelow(128)],
-              ['patch_change', 0, 8, secrets.randbelow(128)],
-              ['patch_change', 0, 9, secrets.randbelow(128)],
-              ['patch_change', 0, 10, secrets.randbelow(128)],
-              ['patch_change', 0, 11, secrets.randbelow(128)],
-              ['patch_change', 0, 12, secrets.randbelow(128)],
-              ['patch_change', 0, 13, secrets.randbelow(128)],
-              ['patch_change', 0, 14, secrets.randbelow(128)],
-              ['patch_change', 0, 15, secrets.randbelow(128)],]]
+print('Prepping the dataset...')
+print('Splitting the dataset into channels...')
+for i in range(len(ev_matrix)):
+  if ev_matrix[i][3] == 0:
+    ch0_ev_matrix.append(ev_matrix[i])
 
-if start_note_is_random:
-  start_note = secrets.randbelow(128)
+  if ev_matrix[i][3] == 1:
+    ch1_ev_matrix.append(ev_matrix[i])
+
+  if ev_matrix[i][3] == 2:
+    ch2_ev_matrix.append(ev_matrix[i])
+  
+  if ev_matrix[i][3] == 3:
+    ch3_ev_matrix.append(ev_matrix[i])
+
+  if ev_matrix[i][3] == 4:
+    ch4_ev_matrix.append(ev_matrix[i])
+
+  if ev_matrix[i][3] == 5:
+    ch5_ev_matrix.append(ev_matrix[i])
+
+  if ev_matrix[i][3] == 6:
+    ch6_ev_matrix.append(ev_matrix[i])
+  
+  if ev_matrix[i][3] == 7:
+    ch7_ev_matrix.append(ev_matrix[i])
+
+  if ev_matrix[i][3] == 8:
+    ch8_ev_matrix.append(ev_matrix[i])
+
+  if ev_matrix[i][3] == 9:
+    ch9_ev_matrix.append(ev_matrix[i])
+
+  if ev_matrix[i][3] == 10:
+    ch10_ev_matrix.append(ev_matrix[i])
+  
+  if ev_matrix[i][3] == 11:
+    ch11_ev_matrix.append(ev_matrix[i])
+
+  if ev_matrix[i][3] == 12:
+    ch12_ev_matrix.append(ev_matrix[i])
+
+  if ev_matrix[i][3] == 13:
+    ch13_ev_matrix.append(ev_matrix[i])
+
+  if ev_matrix[i][3] == 14:
+    ch14_ev_matrix.append(ev_matrix[i])
+  
+  if ev_matrix[i][3] == 15:
+    ch15_ev_matrix.append(ev_matrix[i])    
+
+
+print('Sorting channel events...')
+
+ch0_ev_matrix.sort(key=lambda x: x[6])
+ch1_ev_matrix.sort(key=lambda x: x[6])
+ch2_ev_matrix.sort(key=lambda x: x[6])
+ch3_ev_matrix.sort(key=lambda x: x[6])
+ch4_ev_matrix.sort(key=lambda x: x[6])
+ch5_ev_matrix.sort(key=lambda x: x[6])
+ch6_ev_matrix.sort(key=lambda x: x[6])
+ch7_ev_matrix.sort(key=lambda x: x[6])
+ch8_ev_matrix.sort(key=lambda x: x[6])
+ch9_ev_matrix.sort(key=lambda x: x[6])
+ch10_ev_matrix.sort(key=lambda x: x[6])
+ch11_ev_matrix.sort(key=lambda x: x[6])
+ch12_ev_matrix.sort(key=lambda x: x[6])
+ch13_ev_matrix.sort(key=lambda x: x[6])
+ch14_ev_matrix.sort(key=lambda x: x[6])
+ch15_ev_matrix.sort(key=lambda x: x[6])
+
+print('Chordifying MIDI channels events...')
+
+#ev_matrix = [j for i in zip(ch0_ev_matrix, ch1_ev_matrix) for j in i]
+ev_matrix1 = [ch0_ev_matrix, 
+             ch1_ev_matrix, 
+             ch2_ev_matrix,
+             ch3_ev_matrix, 
+             ch4_ev_matrix,
+             ch5_ev_matrix, 
+             ch6_ev_matrix,
+             ch7_ev_matrix, 
+             ch8_ev_matrix,
+             ch9_ev_matrix, 
+             ch10_ev_matrix,
+             ch11_ev_matrix, 
+             ch12_ev_matrix,             
+             ch13_ev_matrix, 
+             ch14_ev_matrix,                                                                  
+             ch15_ev_matrix]
+
+ev_matrix2 = [ele for ele in ev_matrix1 if ele != []] 
+ev_matrix = list(toolz.itertoolz.interleave(ev_matrix2))
+
+print('Final sorting and notes list creation...')
+ev_matrix.sort(key=lambda x: x[6])
+not_matrix = [row[4] for row in ev_matrix]
+
 
 if ctime > 0:
   time = ctime
 else:
   time = 0
-
-if melody_only_output_for_melody_datasets:
-  try:
-    index1 = slices_melody_pitches.index(start_note)
-    index = index1+augmentation_strength*2
-  except:
-    index1 = slices_melody_pitches.index(average_note_pitch)
-    index = index1+augmentation_strength*2
 
 try:
   if len(cev_matrix) != 0:
@@ -266,8 +335,22 @@ try:
     flag = True
     events_matrix = ev_matrix
     notes_matrix = not_matrix
+
     print('Priming_sequence: MIDI note #', [start_note])
     index = not_matrix.index(start_note, secrets.choice(range(len(not_matrix))))
+
+    if start_with_random_introduction:
+      print('Trying to find a random intro for the composition...')
+      start = False
+      while start == False:
+       index = secrets.choice(range(len(ev_matrix)))
+       for i in range(index, (len(ev_matrix))):
+        event = ev_matrix[i]
+        if event[7] == 1:
+          start = True
+          index = event[6]
+          print('Success! Found a sutable composition introduction!')
+          break
 except: 
   print('The Generator could not find the starting note in a dataset note sequence. Please adjust the parameters.')
   print('Meanwhile, trying to generate a sequence with the MIDI note # [60]')
@@ -279,167 +362,110 @@ except:
   except:
     print('Unfortunatelly, that did not work either. Please try again/restart run-time.')
     sys.exit()
+
+
+
   
 print('Final starting index:', index)
+print('Beginning the pattern search and generation...')
+
+if extra_match_slices != 'Notes Only':
+  print('Extra slices matching type requested:', extra_match_slices)
 
 for i in tqdm.auto.tqdm(range(number_of_slices)):
-  for k in range(notes_per_slice):
-    if try_karaoke == True:
-      if k > 3:
-        try:
-          event03 = ev_matrix[index+k-4]
-          event02 = ev_matrix[index+k-3]
-          event01 = ev_matrix[index+k-2]
-          event0 = ev_matrix[index+k-1]
-        
-          event = ev_matrix[index+k]
 
-          event1 = ev_matrix[index+k+1]
-          event2 = ev_matrix[index+k+2]
-          event3 = ev_matrix[index+k+3]
-          event4 = ev_matrix[index+k+4]
-          if not_matrix[index+k] > 0 and event4[0] == 'note':
-            if relative_note_timings:
-              if event1[1] != event[1]: 
-                time += abs(output_ticks - int((event[5] + ticks_per_note) * ticks_durations_multiplier))
-              else:
-                time += 0
-            else:
-              if event1[1] != event[1]:
-                time += abs(int(ticks_per_note * ticks_durations_multiplier))
-              else:
-                time += 0            
-            ovent_a = ['note', int(time * notes_timings_multiplier), int(event4[2] * notes_durations_multiplier), event4[3], event4[4] + transpose_composition, (int(event[5] * notes_velocities_multiplier) + transpose_velocity)]                  
-            output_events_matrix.append(ovent_a)
-            x += 1 
-          #how to add stuff...
-          if notes_matrix[index+k] == -1 and event[0] == 'text_event' or event[0] == 'lyric': 
-            ovent_a = ['text_event', int(time), event[2]]                          
-            output_events_matrix.append(ovent_a)
-          #this is it :)
+  block_events = []
+  block_notes = []
 
-        except:
-          print('The generator could not generate full pattern. Please try again.')
-          print('Please try again, maybe even with different parameters or a larger dataset.')
-          print('If error persists, please restart/factory reset the run-time.')
-          sys.exit()
+  for i in range(notes_per_slice):
+    previous_event = ev_matrix[index-1+i]
+    event = ev_matrix[index+i]
+    next_event = ev_matrix[index+1+i]
 
-    if try_karaoke == False:  
-      if attention_span == 'augmentation1' or 'augmentation2':
-        if k > 3:
-          try:
-            event03 = ev_matrix[index+k-4]
-            event02 = ev_matrix[index+k-3]
-            event01 = ev_matrix[index+k-2]
-            event0 = ev_matrix[index+k-1]
+
+
+    if ev_matrix[index+i][4] > 0 and event[0] == 'note':
+
+      if relative_note_timings:
+        if previous_event[1] != event[1]: 
+          time += abs(output_ticks - int((event[5] + ticks_per_note) * ticks_durations_multiplier))
+        else:
+          time += 0
+
+      else:
+        if previous_event[1] != event[1]:
+          time += abs(int(ticks_per_note * ticks_durations_multiplier))
+        else:
+          time += 0
+
+      ovent_a = ['note', int(time * notes_timings_multiplier), int(event[2] * notes_durations_multiplier), event[3], event[4] + transpose_composition, (int(event[5] * notes_velocities_multiplier) + transpose_velocity)]                  
+      output_events_matrix.append(ovent_a)
+
+      nts1 += 1
+      if i >= notes_per_slice - number_of_notes_to_match_slices:
+        block_events.append(ovent_a)
+        block_notes.append(ovent_a[4])
+        if debug: print(block_notes)
+
+      
+    #how to add stuff...
+    if ev_matrix[index+i][4] == -1 and event[0] == 'text_event' or event[0] == 'lyric': 
+      ovent_a = ['text_event', int(time), event[2]]                          
+      output_events_matrix.append(ovent_a)
+      block_events.append(ovent_a)
           
-            event = ev_matrix[index+k]
+      kar += 1
+    #this is it :)     
+      
 
-            event1 = ev_matrix[index+k+1]
-            event2 = ev_matrix[index+k+2]
-            event3 = ev_matrix[index+k+3]
-            event4 = ev_matrix[index+k+4]
-            if not_matrix[index+k] > 0 and event4[0] == 'note':
-              if relative_note_timings:
-                if event1[1] != event[1]: 
-                  time += abs(output_ticks - int((event[5] + ticks_per_note) * ticks_durations_multiplier))
-                else:
-                  time += 0
-              else:
-                if event1[1] != event[1]:
-                  time += abs(int(ticks_per_note * ticks_durations_multiplier))
-                else:
-                  time += 0            
-              ovent_a = ['note', int(time * notes_timings_multiplier), int(event4[2] * notes_durations_multiplier), event4[3], event4[4] + transpose_composition, (int(event[5] * notes_velocities_multiplier) + transpose_velocity)]                  
-              output_events_matrix.append(ovent_a)
-              x += 1 
 
-          except:
-            print('The generator could not generate full pattern. Please try again.')
-            print('Please try again, maybe even with different parameters or a larger dataset.')
-            print('If error persists, please restart/factory reset the run-time.')
-            sys.exit()   
+    
+  found_pattern = False
 
-  if attention_span == 'augmentation1':
-      try:
-       for i in range(len(notes_matrix)-8):
-        if notes_matrix[i] == event03[4]:
-          if events_matrix[i][2] == event03[2]:
-            if events_matrix[i][5] == event03[5]:
-              if events_matrix[i][3] == event03[3]:                   
-                if notes_matrix[i+1] == event02[4]:
-                  index = i + 1
-                  if notes_matrix[i+2] == event01[4]:
-                    index = i + 2
-                    if notes_matrix[i+3] == event0[4]:
-                      index = i + 3                     
-                      if notes_matrix[i+4] == event[4]:
-                        index = i + 4
-                        if notes_matrix[i+5] == event1[4]:
-                          index = i + 5
-                          if notes_matrix[i+6] == event2[4]:
-                            index = i + 6
-                            if notes_matrix[i+7] == event3[4]:
-                              index = i + 7
-                              if notes_matrix[i+8] == event4[4]:
-                                index = i + 8
-      except:
-        index = i                     
-      try:
-        pass
-      except:
-        print('Cound not find enough tokens to generate. Please try again!')
-        sys.exit()
-     
-  if attention_span == 'augmentation2':
-      try:
-       for i in range(len(notes_matrix)-8):
-        if notes_matrix[i] == event03[4]:
-          if events_matrix[i][2] == event03[2]:
-            if events_matrix[i][5] == event03[5]:
-              if events_matrix[i][3] == event03[3]:                   
-                if notes_matrix[i+1] == event02[4]:
-                  if events_matrix[i+1][2] == event02[2]:
-                    if events_matrix[i+1][5] == event02[5]:
-                      if events_matrix[i+1][3] == event02[3]:                    
-                        if notes_matrix[i+2] == event01[4]:
-                          #index = i + 2
-                          if notes_matrix[i+3] == event0[4]:
-                            #index = i + 3                    
-                            if notes_matrix[i+4] == event[4]:
-                              #index = i + 4
-                              if notes_matrix[i+5] == event1[4]:
-                                #index = i + 5
-                                if notes_matrix[i+6] == event2[4]:
-                                  #index = i + 6
-                                  if notes_matrix[i+7] == event3[4]:
-                                    #index = i + 7
-                                    if notes_matrix[i+8] == event4[4]:
-                                      index = i + 8
-      except:
-        index = i                     
-      try:
-        pass    
-      except:
-        print('Cound not find enough tokens to generate. Please try again!')
-        sys.exit()
+  for x in range(len(ev_matrix) - number_of_notes_to_match_slices - notes_per_slice):
+    z = 0  
+    if ev_matrix[x][0] == 'note':
 
-if melody_only_output_for_melody_datasets:   
-  events_matrix = [output_ticks, slices_melody_events]
-  itrack = 1
-  i=0
-  while itrack < len(events_matrix):
-    for event in events_matrix[itrack]:
-      if i >= index1 and i < index1 + number_of_slices * notes_per_slice:
-        if event[0] == 'note':
+      for y in range(len(block_events)):       
+        if ev_matrix[x+y][0] == 'note' and block_events[y][0] == 'note':
+          if extra_match_slices == 'Full Match':
+            if block_events[y][3] == ev_matrix[x+y][3] and block_events[y][4] == ev_matrix[x+y][4] and block_events[y][2] == ev_matrix[x+y][2] and block_events[y][5] == ev_matrix[x+y][5]:
+                z += 1
+                nts += 1
+                continue 
+          
+          if extra_match_slices == 'Notes Only':
+            if block_events[y][4] == ev_matrix[x+y][4]:            
+                z += 1
+                nts += 1
+                continue        
 
-          output_r.append(event)
-          event[2] = ticks_per_note
-          output1.append(event)
-          x+=1
-      i+=1
-    itrack += 1
-  output.append(output1)
+          if extra_match_slices == 'Durations':
+            if block_events[y][2] == ev_matrix[x+y][2]:
+              z += 1
+              nts += 1
+              continue
+
+          if extra_match_slices == 'Velocities':
+            if block_events[y][5] == ev_matrix[x+y][5]:
+              z += 1
+              nts += 1
+              continue
+
+          if extra_match_slices == 'Channels':
+            if block_events[y][3] == ev_matrix[x+y][3]:       
+              z += 1
+              nts += 1 
+            
+      if z == len(block_events):
+        end_index = x + y
+        found_pattern = True
+        break
+
+  if debug: print('End Index', end_index)
+  if end_index != 0:
+    index = end_index
+    dts += 1
 
 output += [output_events_matrix]
 
@@ -471,10 +497,14 @@ else:
     midi_file1.write(midi_data)
     midi_file1.close()
 
+print('Done! Crunching quick stats...')
 print('First Note:', output[2][1], '=== Last Note:', output[2][-1])
 print('MIDI Stats:', MIDI.score2stats(output))
-print('Total notes:', x, 'out of expected:', len(output[2]) - len(cnotes_matrix) - 1)
-print('Done!')
+print('The dataset was scanned', dts, 'times.')
+print('Examined', nts, 'notes from the dataset.')
+print('Generated notes total:', nts1, 'out of expected', len(output[2]) - len(cnotes_matrix) - 1, 'MIDI events...')
+if try_karaoke: print('Generated', kar, 'Karaoke events.')
+print('Task complete!')
 print('Downloading your MIDI now :)')
 print('Enjoy! :)')
 

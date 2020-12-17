@@ -9,7 +9,7 @@ Original file is located at
 Original GitHub repo is located at:
     https://github.com/asigalov61/Meddleying-MAESTRO
 
-# Meddleying MAESTRO (ver 2.8)
+# Meddleying MAESTRO (ver 3.1)
 
 ***
 
@@ -89,7 +89,7 @@ melody_reduction_to_slices_max_pitches = False #@param {type:"boolean"}
 
 desired_MIDI_channel = 16 #@param {type:"slider", min:1, max:16, step:1}
 
-flip_input_dataset = True #@param {type:"boolean"}
+flip_input_dataset = False #@param {type:"boolean"}
 
 remove_drums = True #@param {type:"boolean"}
 
@@ -119,10 +119,10 @@ simulated_velocity_top_pitch_shift_pitch = 1 #@param {type:"slider", min:1, max:
 simulated_velocity_baseline_pitch = 1 #@param {type:"slider", min:1, max:127, step:1}
 simulated_velocity_chord_size_in_notes = 0 #@param {type:"slider", min:0, max:127, step:1}
 
-reverse_resulting_dataset = True #@param {type:"boolean"}
+reverse_resulting_dataset = False #@param {type:"boolean"}
 
-combine_original_and_resulting_datasets_together = True #@param {type:"boolean"}
-combine_flipped_and_resulting_datasets_together = True #@param {type:"boolean"}
+combine_original_and_resulting_datasets_together = False #@param {type:"boolean"}
+combine_flipped_and_resulting_datasets_together = False #@param {type:"boolean"}
 
 try_karaoke = False #@param {type:"boolean"}
 
@@ -132,6 +132,7 @@ debug = False #@param {type:"boolean"}
 
 os.chdir("./")
 
+idx = 0
 oev_matrix = []
 onot_matrix = []
 fev_matrix = []
@@ -162,7 +163,7 @@ slices_counter = 0
 slices_count = 0
 chord_counter = 0
 max_event_pitch = 0
-
+first_event = True
 ###########
 
 def list_average(num):
@@ -248,11 +249,20 @@ for file in tqdm.auto.tqdm(files):
       score = MIDI.grep(score4, [desired_MIDI_channel-1])
     else:
       score = score4
-    
+    first_event = True
     itrack = 1
     while itrack < len(score):
       for event in score[itrack]:
         if event[0] == 'note':
+          
+          event.append(idx)
+          idx += 1
+          if first_event == True:
+            event.append(1)
+            first_event = False
+          else:
+            event.append(0)
+
           onot_matrix.append(event[4])
           oev_matrix.append(event)
 
@@ -261,8 +271,8 @@ for file in tqdm.auto.tqdm(files):
           fnot_matrix.append(fevent[4])
           fev_matrix.append(fevent)
 
-          if flip_input_dataset:
-            event[4] = 127 - event[4]
+          #if flip_input_dataset:
+          event[4] = 127 - event[4]
 
           if five_notes_per_octave_pitch_quantization:
             event[4] = int(math.floor(event[4] / 12 * 5) * 12 / 5)
@@ -326,6 +336,7 @@ for file in tqdm.auto.tqdm(files):
           if remove_random_notes:
             if secrets.randbelow(2) == 1:
               remnote_count += 1
+
             else:
               not_matrix.append(event[4])
               ev_matrix.append(event)
@@ -333,6 +344,7 @@ for file in tqdm.auto.tqdm(files):
           if keep_only_notes_above_this_pitch_number > 0:
             if event[4] < keep_only_notes_above_this_pitch_number:
               remnote_count += 1
+
             else: 
               not_matrix.append(event[4])
               ev_matrix.append(event) 
@@ -343,6 +355,7 @@ for file in tqdm.auto.tqdm(files):
             if remnote < remove_every_n_notes:
               remnote += 1
               remnote_count += 1
+
             else:
               remnote = 0
               not_matrix.append(event[4])
@@ -364,6 +377,7 @@ for file in tqdm.auto.tqdm(files):
             if remnote == remove_every_nth_note + 1:
               remnote = 0 
               remnote_count += 1
+
             else:
               remnote += 1
               not_matrix.append(event[4])
@@ -401,7 +415,6 @@ for file in tqdm.auto.tqdm(files):
         #this is it :)
 
       itrack += 1
-
   
     # Calculate stats about the resulting dataset
     average_note_pitch = 0
@@ -435,9 +448,11 @@ if reverse_resulting_dataset:
   fnot_matrix.reverse()
   fev_matrix.reverse()
 
-else:
-  onot_matrix.reverse()
-  oev_matrix.reverse()
+#else:
+  #onot_matrix.reverse()
+  #oev_matrix.reverse()
+  #not_matrix = onot_matrix
+  #ev_matrix = oev_matrix
 
 if combine_original_and_resulting_datasets_together:
   not_matrix += onot_matrix
