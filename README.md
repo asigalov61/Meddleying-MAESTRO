@@ -25,8 +25,6 @@
 
 ***
 
-### Live demo: https://asigalov61.pythonanywhere.com/
-
 ### SoundCloud: https://soundcloud.com/aleksandr-sigalov-61/sets/meddleying-maestro
 
 ### Video: https://youtu.be/46hKTkU7CDU
