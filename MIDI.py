@@ -360,9 +360,9 @@ see opus2midi() and score2opus().
                     new_event[2] = ticks_so_far - new_event[1]
                     score_track.append(new_event)
                 elif pitch > 127:
-                    _warn('opus2score: note_off with no note_on, bad pitch='+str(pitch))
+                    pass #_warn('opus2score: note_off with no note_on, bad pitch='+str(pitch))
                 else:
-                    _warn('opus2score: note_off with no note_on cha='+str(cha)+' pitch='+str(pitch))
+                    pass #_warn('opus2score: note_off with no note_on cha='+str(cha)+' pitch='+str(pitch))
             elif opus_event[0] == 'note_on':
                 cha = opus_event[2]
                 pitch = opus_event[3]
@@ -381,7 +381,7 @@ see opus2midi() and score2opus().
             for new_e in note_on_events:
                 new_e[2] = ticks_so_far - new_e[1]
                 score_track.append(new_e)
-                _warn("opus2score: note_on with no note_off cha="+str(new_e[3])+' pitch='+str(new_e[4])+'; adding note_off at end')
+                pass #_warn("opus2score: note_on with no note_off cha="+str(new_e[3])+' pitch='+str(new_e[4])+'; adding note_off at end')
         score.append(score_track)
     _clean_up_warnings()
     return score
